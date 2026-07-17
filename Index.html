@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#050505" />
+  <meta name="description" content="The Grimoire — a dark fantasy tattoo flash builder by Scott Connick." />
+  <title>The Grimoire — Flash Builder</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #050505;
+      --panel: #0b0b0b;
+      --panel-soft: #111111;
+      --cream: #efe8d6;
+      --cream-soft: #c5beaf;
+      --muted: #817b70;
+      --line: rgba(239, 232, 214, 0.13);
+      --red: #871014;
+      --red-dark: #56090c;
+      --red-bright: #a7171d;
+      --shadow: 0 30px 90px rgba(0, 0, 0, 0.68);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 24px;
+      color: var(--cream);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(255,255,255,0.045), transparent 35%),
+        radial-gradient(circle at 50% 70%, rgba(135,16,20,0.055), transparent 42%),
+        #050505;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.18;
+      background-image:
+        linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.009) 1px, transparent 1px);
+      background-size: 4px 4px;
+      mix-blend-mode: screen;
+    }
+
+    .page {
+      width: min(920px, 100%);
+      margin: 0 auto;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.018), transparent 18%),
+        linear-gradient(180deg, #0b0b0b 0%, #080808 100%);
+      box-shadow: var(--shadow);
+      isolation: isolate;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.14;
+      z-index: -1;
+      background:
+        radial-gradient(circle at 18% 22%, rgba(255,255,255,.16) 0 1px, transparent 2px),
+        radial-gradient(circle at 76% 48%, rgba(255,255,255,.12) 0 1px, transparent 2px),
+        radial-gradient(circle at 34% 78%, rgba(255,255,255,.10) 0 1px, transparent 2px);
+      background-size: 120px 120px, 165px 165px, 210px 210px;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      box-shadow:
+        inset 0 0 120px rgba(0,0,0,.84),
+        inset 0 0 1px rgba(255,255,255,.06);
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      padding: 78px 44px 42px;
+      text-align: center;
+    }
+
+    .title {
+      margin: 0;
+      font-family: "Pirata One", Georgia, serif;
+      font-size: clamp(72px, 12vw, 132px);
+      line-height: 0.82;
+      font-weight: 400;
+      letter-spacing: -0.025em;
+      color: var(--cream);
+      text-shadow:
+        0 3px 0 rgba(0,0,0,.65),
+        0 14px 38px rgba(0,0,0,.74);
+    }
+
+    .byline {
+      margin: 28px 0 0;
+      color: var(--cream-soft);
+      font-size: clamp(10px, 1.8vw, 14px);
+      font-weight: 500;
+      letter-spacing: .36em;
+      line-height: 1.8;
+      text-transform: uppercase;
+    }
+
+    .controls {
+      margin-top: 44px;
+    }
+
+    .roll {
+      position: relative;
+      min-width: 238px;
+      min-height: 76px;
+      padding: 0 34px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px;
+      color: white;
+      font: 600 20px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      cursor: pointer;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.06), transparent 38%),
+        linear-gradient(180deg, var(--red-bright), var(--red-dark));
+      box-shadow:
+        0 14px 36px rgba(135,16,20,.30),
+        inset 0 1px rgba(255,255,255,.07);
+      transition:
+        transform .18s ease,
+        filter .18s ease,
+        box-shadow .18s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .roll::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: .11;
+      background:
+        repeating-linear-gradient(
+          135deg,
+          rgba(255,255,255,.18) 0 1px,
+          transparent 1px 4px
+        );
+      mix-blend-mode: overlay;
+    }
+
+    .roll:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+      box-shadow:
+        0 18px 42px rgba(135,16,20,.38),
+        inset 0 1px rgba(255,255,255,.08);
+    }
+
+    .roll:active {
+      transform: translateY(0) scale(.985);
+    }
+
+    .roll:focus-visible,
+    .copy:focus-visible {
+      outline: 2px solid var(--cream);
+      outline-offset: 4px;
+    }
+
+    .results {
+      margin-top: 42px;
+      padding-top: 32px;
+      border-top: 1px solid var(--line);
+      text-align: left;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity .28s ease, transform .28s ease;
+      pointer-events: none;
+    }
+
+    .results.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .results-title {
+      margin: 0 0 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .34em;
+      text-transform: uppercase;
+    }
+
+    .grid {
+      display: grid;
+      gap: 11px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 168px 1fr;
+      gap: 18px;
+      align-items: start;
+      padding: 17px 19px;
+      border: 1px solid rgba(255,255,255,.065);
+      border-radius: 10px;
+      background: rgba(255,255,255,.021);
+    }
+
+    .label {
+      padding-top: 4px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .value {
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 20px;
+      line-height: 1.45;
+    }
+
+    .prompt-box {
+      margin-top: 13px;
+      padding: 24px 24px 22px;
+      border: 1px solid rgba(255,255,255,.055);
+      border-left: 3px solid var(--red);
+      border-radius: 9px;
+      background:
+        linear-gradient(90deg, rgba(135,16,20,.14), rgba(255,255,255,.018));
+    }
+
+    .prompt {
+      margin: 0;
+      color: #f4ecd7;
+      font-size: 18px;
+      line-height: 1.68;
+    }
+
+    .copy-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    .copy {
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 8px;
+      padding: 11px 15px;
+      color: var(--cream-soft);
+      background: #101010;
+      font: 600 10px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: color .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .copy:hover {
+      color: var(--cream);
+      border-color: rgba(255,255,255,.20);
+      background: #141414;
+    }
+
+    .footer {
+      margin: 18px 0 0;
+      text-align: center;
+      color: #6d685f;
+      font-size: 11px;
+      letter-spacing: .11em;
+    }
+
+    @media (max-width: 680px) {
+      body {
+        padding: 12px;
+      }
+
+      .content {
+        padding: 58px 20px 28px;
+      }
+
+      .title {
+        font-size: clamp(64px, 19vw, 96px);
+        line-height: .86;
+      }
+
+      .byline {
+        margin-top: 22px;
+        letter-spacing: .25em;
+      }
+
+      .controls {
+        margin-top: 34px;
+      }
+
+      .roll {
+        min-width: 210px;
+        min-height: 68px;
+      }
+
+      .results {
+        margin-top: 34px;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .value {
+        font-size: 18px;
+      }
+
+      .prompt {
+        font-size: 17px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <section class="card" aria-label="The Grimoire flash builder">
+      <div class="content">
+        <h1 class="title">THE GRIMOIRE</h1>
+        <p class="byline">Flash Builder by @scottconnick</p>
+
+        <div class="controls">
+          <button class="roll" id="rollButton" type="button">Roll</button>
+        </div>
+
+        <section class="results" id="results" aria-live="polite">
+          <p class="results-title">Your Flash Vision</p>
+
+          <div class="grid">
+            <div class="row">
+              <div class="label">Main Subject</div>
+              <div class="value" id="mainSubject"></div>
+            </div>
+
+            <div class="row">
+              <div class="label">Object / Element</div>
+              <div class="value" id="objectElement"></div>
+            </div>
+
+            <div class="row">
+              <div class="label">Extra Details</div>
+              <div class="value" id="extraDetails"></div>
+            </div>
+
+            <div class="row">
+              <div class="label">Style Twist</div>
+              <div class="value" id="styleTwist"></div>
+            </div>
+          </div>
+
+          <div class="prompt-box">
+            <p class="prompt" id="prompt"></p>
+            <div class="copy-row">
+              <button class="copy" id="copyButton" type="button">Copy Prompt</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <p class="footer">By Scott Connick · Flash visions summoned in darkness</p>
+  </main>
+
+  <script>
+    const mainSubjects = [
+      "Skull",
+      "Reaper",
+      "Dragon",
+      "Knight",
+      "Blindfold Prophet",
+      "Witch",
+      "Necromancer",
+      "Executioner",
+      "Fallen Angel",
+      "Cursed King",
+      "Plague Doctor",
+      "Valkyrie",
+      "Demon",
+      "Sorceress",
+      "Barbarian",
+      "Death Knight",
+      "Ghost Warrior",
+      "Ancient Beast",
+      "Hooded Pilgrim",
+      "Undead Saint",
+      "Black Hound",
+      "Horned Oracle",
+      "Drowned Sailor",
+      "Moon Priestess",
+      "Armoured Revenant"
+    ];
+
+    const objects = [
+      "Broken Sword",
+      "Lantern",
+      "Reliquary",
+      "Black Sun",
+      "Hourglass",
+      "Executioner's Axe",
+      "Crown of Thorns",
+      "Cathedral",
+      "Funeral Bell",
+      "Ancient Key",
+      "Coffin",
+      "Iron Halo",
+      "Torch",
+      "War Banner",
+      "Ritual Dagger",
+      "Chalice",
+      "Burning Book",
+      "Giant Nail",
+      "Grave Marker",
+      "Cracked Mirror",
+      "Stone Throne",
+      "Caged Flame",
+      "Sealed Scroll",
+      "Bone Staff",
+      "Rusty Helm"
+    ];
+
+    const details = [
+      "Ravens circling overhead",
+      "A face hidden behind torn cloth",
+      "Black smoke spilling from the eyes",
+      "Chains wrapped around the body",
+      "Roots growing through the armour",
+      "A halo made from blades",
+      "Tiny cathedral windows",
+      "Wax dripping from the hands",
+      "Ghosts emerging from the shadows",
+      "A mouth carved into the armour",
+      "Thorns twisting around the figure",
+      "Skulls suspended like charms",
+      "A split moon behind the head",
+      "Hands reaching from below",
+      "Heavy rain cutting through the scene",
+      "A cloak turning into birds",
+      "Runes scratched into the weapon",
+      "A serpent coiled through the composition",
+      "Candle flames bending sideways",
+      "Bones fused into the architecture",
+      "A distant ruined tower",
+      "A crown floating above the head",
+      "A shadow moving independently",
+      "A single eye glowing in darkness",
+      "A cracked mask hanging loose"
+    ];
+
+    const styleTwists = [
+      "Heavy blackwork with a bold silhouette",
+      "Dark fantasy engraving",
+      "Graphic medieval woodcut",
+      "High-contrast illustrative black and grey",
+      "Minimal detail with oversized black shapes",
+      "3/4 view with strong forward movement",
+      "Tattoo-first composition built to wrap",
+      "Mignola-inspired shadow blocking",
+      "Ancient manuscript meets modern blackwork",
+      "Elongated gothic proportions",
+      "Broken symmetrical composition",
+      "Monumental statue-like pose",
+      "Cinematic low-angle composition",
+      "Simplified shapes with dramatic negative space",
+      "Weathered armour and rough textures"
+    ];
+
+    const rollButton = document.getElementById("rollButton");
+    const copyButton = document.getElementById("copyButton");
+    const results = document.getElementById("results");
+    const promptEl = document.getElementById("prompt");
+
+    const randomItem = array =>
+      array[Math.floor(Math.random() * array.length)];
+
+    function randomUnique(array, count) {
+      const pool = [...array];
+      const selected = [];
+
+      while (selected.length < count && pool.length) {
+        const index = Math.floor(Math.random() * pool.length);
+        selected.push(pool.splice(index, 1)[0]);
+      }
+
+      return selected;
+    }
+
+    function rollGrimoire() {
+      const main = randomItem(mainSubjects);
+      const object = randomItem(objects);
+      const extras = randomUnique(details, 2);
+      const twist = randomItem(styleTwists);
+
+      document.getElementById("mainSubject").textContent = main;
+      document.getElementById("objectElement").textContent = object;
+      document.getElementById("extraDetails").textContent = extras.join(" · ");
+      document.getElementById("styleTwist").textContent = twist;
+
+      const fullPrompt =
+        `${main} with a ${object.toLowerCase()}, featuring ${extras[0].toLowerCase()} and ${extras[1].toLowerCase()}. Rendered as ${twist.toLowerCase()}.`;
+
+      promptEl.textContent = fullPrompt;
+      results.classList.add("visible");
+      rollButton.textContent = "Roll Again";
+    }
+
+    async function copyPrompt() {
+      const text = promptEl.textContent.trim();
+      if (!text) return;
+
+      try {
+        await navigator.clipboard.writeText(text);
+        copyButton.textContent = "Copied";
+      } catch {
+        const temp = document.createElement("textarea");
+        temp.value = text;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand("copy");
+        temp.remove();
+        copyButton.textContent = "Copied";
+      }
+
+      setTimeout(() => {
+        copyButton.textContent = "Copy Prompt";
+      }, 1500);
+    }
+
+    rollButton.addEventListener("click", rollGrimoire);
+    copyButton.addEventListener("click", copyPrompt);
+
+    document.addEventListener("keydown", event => {
+      if (
+        event.code === "Space" &&
+        !["INPUT", "TEXTAREA", "BUTTON"].includes(document.activeElement.tagName)
+      ) {
+        event.preventDefault();
+        rollGrimoire();
+      }
+    });
+  </script>
+</body>
+</html>
